@@ -11,7 +11,7 @@ import java.util.*
 class CalendarUtil {
     companion object {
         @JvmStatic
-        fun getDisplayMoth(position: Int): Long {
+        fun getDisplayMonth(position: Int): Long {
             val cal = Calendar.getInstance()
             cal.timeInMillis = START_DAY
             cal.add(Calendar.MONTH, position)

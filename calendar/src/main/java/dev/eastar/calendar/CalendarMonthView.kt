@@ -3,7 +3,6 @@ package dev.eastar.calendar
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Rect
-import android.log.Log
 import android.util.AttributeSet
 import android.view.GestureDetector
 import android.view.MotionEvent
@@ -28,12 +27,6 @@ class CalendarMonthView @JvmOverloads constructor(context: Context, attrs: Attri
         dayFirst = CalendarUtil.getFirstWeek(displayMonth)
     }
 
-//    override fun onFinishInflate() {
-//        super.onFinishInflate()
-//        Log.e(isRtl)
-//    }
-
-    private var isRtl: Int = resources.configuration.layoutDirection
     private var monthWidth: Int = 0
     private var monthHeight: Int = 0
     private var weekWidth: Int = 0
@@ -68,7 +61,6 @@ class CalendarMonthView @JvmOverloads constructor(context: Context, attrs: Attri
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         CalendarObservable.addObserver(observer)
-        Log.e(isRtl)
     }
 
     override fun onDetachedFromWindow() {
@@ -78,7 +70,7 @@ class CalendarMonthView @JvmOverloads constructor(context: Context, attrs: Attri
 
     private val observer = Observer { _: Observable, o: Any ->
         if (o is Long) {
-            selectedDay = CalendarUtil.getSmartSelectedDay(displayMonth, o)
+            selectedDay = o
             invalidate()
         }
     }
@@ -143,9 +135,7 @@ class CalendarMonthView @JvmOverloads constructor(context: Context, attrs: Attri
     }
 
     //------------------------------------------------------------------------------------------
-    override fun onTouchEvent(event: MotionEvent): Boolean {
-        return detector.onTouchEvent(event)
-    }
+    override fun onTouchEvent(event: MotionEvent) = detector.onTouchEvent(event)
 
     private val detector = GestureDetector(getContext(), object : GestureDetector.SimpleOnGestureListener() {
         override fun onDown(e: MotionEvent): Boolean {

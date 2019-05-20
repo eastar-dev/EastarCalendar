@@ -57,11 +57,11 @@ class CalendarPagerFragment : android.support.v4.app.Fragment() {
         pager.adapter = DAdapter(fragmentManager!!)
         pager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
             override fun onPageSelected(position: Int) {
-//                if (smartSelectedDay) {
-//                    val displayMoth = CalendarUtil.getDisplayMoth(position)
-//                    val daySelected = CalendarUtil.getSmartSelectedDay(displayMoth, selectedDay)
-//                    CalendarObservable.notifySelectedDay(daySelected)
-//                }
+                if (smartSelectedDay) {
+                    val displayMoth = CalendarUtil.getDisplayMonth(position)
+                    selectedDay = CalendarUtil.getSmartSelectedDay(displayMoth, selectedDay)
+                    CalendarObservable.notifySelectedDay(selectedDay)
+                }
             }
         })
         pager.setCurrentItem(toPosition(selectedDay), false)
@@ -71,7 +71,7 @@ class CalendarPagerFragment : android.support.v4.app.Fragment() {
     private inner class DAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
         override fun getItem(position: Int): Fragment {
             Log.e(position)
-            return CalendarFragment.newInstance(CalendarUtil.getDisplayMoth(position))
+            return CalendarFragment.newInstance(CalendarUtil.getDisplayMonth(position))
         }
 
         override fun getCount(): Int {

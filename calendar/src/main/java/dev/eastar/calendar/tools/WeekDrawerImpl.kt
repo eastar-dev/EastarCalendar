@@ -1,7 +1,9 @@
 package dev.eastar.calendar.tools
 
 import android.graphics.*
-import dev.eastar.calendar.*
+import dev.eastar.calendar.TEXT_SIZE
+import dev.eastar.calendar.WeekDrawer
+import dev.eastar.calendar.dayOfWeekColors
 import java.util.*
 
 class WeekDrawerImpl : WeekDrawer {
