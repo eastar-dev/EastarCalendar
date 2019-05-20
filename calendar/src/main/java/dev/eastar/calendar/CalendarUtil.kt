@@ -3,7 +3,6 @@ package dev.eastar.calendar
 import android.content.res.Resources
 import android.log.Log
 import android.util.TypedValue
-import dev.eastar.calendar.CalendarConst.Companion.DAY1
 import dev.eastar.calendar.CalendarPagerFragment.Companion.START_DAY
 import java.text.SimpleDateFormat
 import java.util.*

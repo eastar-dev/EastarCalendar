@@ -1,16 +1,12 @@
 package dev.eastar.calendar.tools
 
 import android.graphics.*
-import dev.eastar.calendar.CalendarConst.Companion.dayOfWeekColors
-import dev.eastar.calendar.CalendarUtil
-import dev.eastar.calendar.DayDrawer
-import dev.eastar.calendar.day
-import dev.eastar.calendar.dp
+import dev.eastar.calendar.*
 import java.util.*
 
 class DayDrawerImpl : DayDrawer {
     // 테두리
-    val selectedPaint by lazy {
+    private val selectedPaint by lazy {
         Paint(Paint.ANTI_ALIAS_FLAG or Paint.DITHER_FLAG).apply {
             color = Color.parseColor("#00d89c")
             style = Paint.Style.STROKE
@@ -18,7 +14,7 @@ class DayDrawerImpl : DayDrawer {
         }
     }
     //날짜
-    val textPaint by lazy {
+    private val textPaint by lazy {
         Paint(Paint.ANTI_ALIAS_FLAG or Paint.DITHER_FLAG).apply {
             color = Color.parseColor("#000000")
             textSize = 14f.dp.toFloat()
@@ -27,28 +23,9 @@ class DayDrawerImpl : DayDrawer {
         }
     }
     //오늘
-    val todayPaint by lazy {
+    private val todayPaint by lazy {
         Paint(Paint.ANTI_ALIAS_FLAG or Paint.DITHER_FLAG).apply {
             color = Color.parseColor("#00d89c")
-        }
-    }
-
-    val alarmPaint by lazy {
-        Paint(Paint.ANTI_ALIAS_FLAG or Paint.DITHER_FLAG)
-    }
-    val transferPaint by lazy {
-        Paint(Paint.ANTI_ALIAS_FLAG or Paint.DITHER_FLAG).apply {
-            color = Color.parseColor("#00d89c")
-        }
-    }
-    val alertPaint by lazy {
-        Paint(Paint.ANTI_ALIAS_FLAG or Paint.DITHER_FLAG).apply {
-            color = Color.parseColor("#925fc0")
-        }
-    }
-    val schedulePaint by lazy {
-        Paint(Paint.ANTI_ALIAS_FLAG or Paint.DITHER_FLAG).apply {
-            color = Color.parseColor("#3498db")
         }
     }
 
@@ -66,20 +43,40 @@ class DayDrawerImpl : DayDrawer {
         cal.timeInMillis = day
         val dow = cal.get(Calendar.DAY_OF_WEEK)
 
-        textPaint.color = dayOfWeekColors[dow]!!
-        todayPaint.color = -0xff2764
+        textPaint.color = dayOfWeekColors[dow] ?: Color.DKGRAY
+        todayPaint.color = Color.GREEN
         if (!isSameMonth) {
             textPaint.alpha = 0x66
             todayPaint.alpha = 0x66
         }
 
         if (isToday) {
-            textPaint.color = -0x1
+            textPaint.color = Color.WHITE
             canvas.drawCircle(rc.centerX().toFloat(), 16f.dp.toFloat(), 10f.dp.toFloat(), todayPaint) // 오늘
         }
         canvas.drawText(day.day, rc.centerX().toFloat(), 20f.dp.toFloat(), textPaint)// 날짜
         if (isSelectedDay)
             canvas.drawRect(rc, selectedPaint)    // 테두리
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////
+    val alarmPaint by lazy {
+        Paint(Paint.ANTI_ALIAS_FLAG or Paint.DITHER_FLAG)
+    }
+    val transferPaint by lazy {
+        Paint(Paint.ANTI_ALIAS_FLAG or Paint.DITHER_FLAG).apply {
+            color = Color.parseColor("#00d89c")
+        }
+    }
+    val alertPaint by lazy {
+        Paint(Paint.ANTI_ALIAS_FLAG or Paint.DITHER_FLAG).apply {
+            color = Color.parseColor("#925fc0")
+        }
+    }
+    val schedulePaint by lazy {
+        Paint(Paint.ANTI_ALIAS_FLAG or Paint.DITHER_FLAG).apply {
+            color = Color.parseColor("#3498db")
+        }
     }
 
     override fun drawState(canvas: Canvas, rc: Rect, day: Long, dayStandard: Long, daySelected: Long) {

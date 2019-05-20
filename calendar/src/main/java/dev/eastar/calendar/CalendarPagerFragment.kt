@@ -73,11 +73,10 @@ class CalendarPagerFragment : android.support.v4.app.Fragment() {
             Log.e(position)
             return CalendarFragment.newInstance(CalendarUtil.getDisplayMoth(position))
         }
+
         override fun getCount(): Int {
             return Integer.MAX_VALUE
         }
-
-
 
         //        @Override
         //        public int getItemPosition(Object object) {

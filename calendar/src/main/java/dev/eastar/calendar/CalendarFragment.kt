@@ -29,6 +29,8 @@ class CalendarFragment : android.support.v4.app.Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return CalendarMonthView(inflater.context)
+        return CalendarMonthView(inflater.context).apply {
+            setDisplayMonth(displayMonth)
+        }
     }
 }
