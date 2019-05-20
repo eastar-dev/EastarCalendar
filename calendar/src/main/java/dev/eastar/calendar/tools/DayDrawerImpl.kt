@@ -1,0 +1,102 @@
+package dev.eastar.calendar.tools
+
+import android.graphics.*
+import dev.eastar.calendar.CalendarConst.Companion.dayOfWeekColors
+import dev.eastar.calendar.CalendarUtil
+import dev.eastar.calendar.DayDrawer
+import dev.eastar.calendar.day
+import dev.eastar.calendar.dp
+import java.util.*
+
+class DayDrawerImpl : DayDrawer {
+    // 테두리
+    val selectedPaint by lazy {
+        Paint(Paint.ANTI_ALIAS_FLAG or Paint.DITHER_FLAG).apply {
+            color = Color.parseColor("#00d89c")
+            style = Paint.Style.STROKE
+            strokeWidth = 1f.dp.toFloat()
+        }
+    }
+    //날짜
+    val textPaint by lazy {
+        Paint(Paint.ANTI_ALIAS_FLAG or Paint.DITHER_FLAG).apply {
+            color = Color.parseColor("#000000")
+            textSize = 14f.dp.toFloat()
+            typeface = Typeface.MONOSPACE
+            textAlign = Paint.Align.CENTER
+        }
+    }
+    //오늘
+    val todayPaint by lazy {
+        Paint(Paint.ANTI_ALIAS_FLAG or Paint.DITHER_FLAG).apply {
+            color = Color.parseColor("#00d89c")
+        }
+    }
+
+    val alarmPaint by lazy {
+        Paint(Paint.ANTI_ALIAS_FLAG or Paint.DITHER_FLAG)
+    }
+    val transferPaint by lazy {
+        Paint(Paint.ANTI_ALIAS_FLAG or Paint.DITHER_FLAG).apply {
+            color = Color.parseColor("#00d89c")
+        }
+    }
+    val alertPaint by lazy {
+        Paint(Paint.ANTI_ALIAS_FLAG or Paint.DITHER_FLAG).apply {
+            color = Color.parseColor("#925fc0")
+        }
+    }
+    val schedulePaint by lazy {
+        Paint(Paint.ANTI_ALIAS_FLAG or Paint.DITHER_FLAG).apply {
+            color = Color.parseColor("#3498db")
+        }
+    }
+
+    override fun draw(canvas: Canvas, rc: Rect, day: Long, dayStandard: Long, daySelected: Long) {
+        drawDay(canvas, rc, day, dayStandard, daySelected)
+        drawState(canvas, rc, day, dayStandard, daySelected)
+    }
+
+    override fun drawDay(canvas: Canvas, rc: Rect, day: Long, dayStandard: Long, daySelected: Long) {
+        val isToday = CalendarUtil.equalDay(day, System.currentTimeMillis())
+        val isSameMonth = CalendarUtil.equalMonth(day, dayStandard)
+        val isSelectedDay = isSameMonth && CalendarUtil.equalDay(day, daySelected)
+
+        val cal = Calendar.getInstance()
+        cal.timeInMillis = day
+        val dow = cal.get(Calendar.DAY_OF_WEEK)
+
+        textPaint.color = dayOfWeekColors[dow]!!
+        todayPaint.color = -0xff2764
+        if (!isSameMonth) {
+            textPaint.alpha = 0x66
+            todayPaint.alpha = 0x66
+        }
+
+        if (isToday) {
+            textPaint.color = -0x1
+            canvas.drawCircle(rc.centerX().toFloat(), 16f.dp.toFloat(), 10f.dp.toFloat(), todayPaint) // 오늘
+        }
+        canvas.drawText(day.day, rc.centerX().toFloat(), 20f.dp.toFloat(), textPaint)// 날짜
+        if (isSelectedDay)
+            canvas.drawRect(rc, selectedPaint)    // 테두리
+    }
+
+    override fun drawState(canvas: Canvas, rc: Rect, day: Long, dayStandard: Long, daySelected: Long) {
+//        val dayData = ViewModelProviders.of(mContext as FragmentActivity).get(CalDataViewModel::class.java).getDayData(day) ?: return
+//
+//        val h = dayData.HISTORY.size > 0
+//        val i = dayData.INFO.size > 0
+//        val s = dayData.SCHEDULE.size > 0
+//        val a = dayData.SCHEDULE.size > 0
+//        val xCenter = rc.centerX().toFloat()
+//        if (h)
+//            canvas.drawCircle(xCenter, VV.dp2px(31f).toFloat(), VV.dp2px(3f).toFloat(), trP)  // 이체
+//        if (i)
+//            canvas.drawCircle(xCenter, VV.dp2px(39f).toFloat(), VV.dp2px(3f).toFloat(), alertP)  // 소식
+//        if (s)
+//            canvas.drawCircle(xCenter, VV.dp2px(47f).toFloat(), VV.dp2px(3f).toFloat(), scheduleP)  // 일정
+//        if (a)
+//            canvas.drawBitmap(bitmap, xCenter + VV.dp2px(9f), VV.dp2px(10f).toFloat(), alarmPaint)// 알람
+    }
+}

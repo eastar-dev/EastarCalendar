@@ -8,6 +8,17 @@
     tools:context=".MainActivity"
     tools:showIn="@layout/activity_main">
 
+<!--    <FrameLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:id="@+id/container" />-->
+
+    <fragment
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/calendarPager"
+        class="dev.eastar.calendar.CalendarPagerFragment" />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
