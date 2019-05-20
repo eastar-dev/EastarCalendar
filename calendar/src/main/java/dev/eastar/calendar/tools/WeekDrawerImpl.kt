@@ -16,8 +16,6 @@ class WeekDrawerImpl : WeekDrawer {
         }
     }
 
-
-
     private val dayOfWeekTexts by lazy {
         val texts = mutableMapOf<Int, String>()
         val cal = Calendar.getInstance()
