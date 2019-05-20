@@ -1,0 +1,3 @@
+include ':app'
+include ':calendar'
+rootProject.name='EastarCalendar'

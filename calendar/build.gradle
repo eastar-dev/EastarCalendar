@@ -1,0 +1,38 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+
+//apply plugin: 'com.github.dcendents.android-maven'
+//group = 'com.github.djrain'
+
+//uploadArchives {
+//    repositories {
+//        mavenDeployer {
+//            repository(url: "http://localhost:8081/repository/maven-releases/") {
+//                authentication(userName: "admin", password: "admin123")
+//                pom.groupId = "com.eastandroid.smartc"
+//                pom.artifactId = "permission"
+//                pom.version = '1.0.0'
+//            }
+//        }
+//    }
+//}
+
+
+android {
+    compileSdkVersion 28
+    defaultConfig {
+        minSdkVersion 14
+        targetSdkVersion 28
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+}

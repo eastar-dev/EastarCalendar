@@ -1,0 +1,10 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.eastandroid.smartc.permission">
+
+    <application>
+        <activity
+            android:name="android.permission.PermissionChecker"
+            android:theme="@style/PermissionTheme" />
+    </application>
+
+</manifest>
