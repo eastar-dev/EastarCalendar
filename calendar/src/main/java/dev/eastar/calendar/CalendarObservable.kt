@@ -1,4 +1,3 @@
-
 import android.log.Log
 import android.os.log
 import java.util.*
@@ -12,5 +11,7 @@ object CalendarObservable : Observable() {
 
     fun notifySelectedWeek(dayOfWeek: Int) {
         Log.e(dayOfWeek)
+        setChanged()
+        super.notifyObservers(dayOfWeek)
     }
 }

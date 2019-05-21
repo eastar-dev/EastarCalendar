@@ -47,4 +47,5 @@ class CalendarUtil {
 
 val Long.month: String get() = SimpleDateFormat("yyyy.M", Locale.getDefault()).format(Date(this))
 val Long.day: String get() = SimpleDateFormat("d", Locale.getDefault()).format(Date(this))
+val Long.week: String get() = SimpleDateFormat("E", Locale.getDefault()).format(Date(this))
 val Number.dp: Int get() = Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, toFloat(), Resources.getSystem().displayMetrics))

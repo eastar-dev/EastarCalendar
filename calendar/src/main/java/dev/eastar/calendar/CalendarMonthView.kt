@@ -8,6 +8,7 @@ import android.os.log
 import android.util.AttributeSet
 import android.view.GestureDetector
 import android.view.MotionEvent
+import android.view.SoundEffectConstants
 import android.view.View
 import dev.eastar.calendar.tools.DayDrawerImpl
 import dev.eastar.calendar.tools.MonthDrawerImpl
@@ -133,6 +134,7 @@ class CalendarMonthView @JvmOverloads constructor(context: Context, attrs: Attri
     }
 
     private fun hitTest(e: MotionEvent) {
+        playSoundEffect(SoundEffectConstants.CLICK)
         if (e.y < weekHeight) {
             CalendarObservable.notifySelectedWeek(firstDayOfWeek + (e.x / dayWidth).toInt())
             return

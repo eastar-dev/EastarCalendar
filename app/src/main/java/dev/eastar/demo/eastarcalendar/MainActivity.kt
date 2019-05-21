@@ -1,5 +1,6 @@
 package dev.eastar.demo.eastarcalendar
 
+import android.content.Context
 import android.log.Log
 import android.os.Bundle
 import android.support.design.widget.Snackbar
@@ -7,10 +8,13 @@ import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import dev.eastar.calendar.CalendarPagerFragment
+import dev.eastar.calendar.day
 import dev.eastar.calendar.month
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -28,13 +32,17 @@ class MainActivity : AppCompatActivity() {
         next.setOnClickListener { calendarPager.next() }
         month.setOnClickListener { calendarPager.move() }
 
-        calendarPager.setOnChangeMonth {
+        calendarPager.setOnChangeMonthListener {
             Log.e(it.month)
             month.text = it.month
         }
-        calendarPager.setOnChangeSelectedDay {
-            Log.e(it.month)
-            month.text = it.month
+        calendarPager.setOnChangeSelectedDayListener {
+            Log.e(it.day)
+            toast(it.day)
+        }
+        calendarPager.setOnWeekClickListener {
+            Log.e(it)
+            toast(Calendar.getInstance().apply { set(Calendar.DAY_OF_WEEK, it) }.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault()))
         }
     }
 
@@ -54,3 +62,5 @@ class MainActivity : AppCompatActivity() {
         }
     }
 }
+
+fun Context.toast(text: CharSequence) = Toast.makeText(this, text, Toast.LENGTH_SHORT).show()

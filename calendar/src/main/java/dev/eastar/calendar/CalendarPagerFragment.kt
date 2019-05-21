@@ -21,8 +21,9 @@ class CalendarPagerFragment : android.support.v4.app.Fragment() {
         const val pagerCount = 12 * 100 //100년
     }
 
-    private var onPageChange: ((Long) -> Unit)? = null
-    private var onSelectedDayChange: ((Long) -> Unit)? = null
+    private var onChangeMonth: ((Long) -> Unit)? = null
+    private var onChangeSelectedDay: ((Long) -> Unit)? = null
+    private var onWeekClickListener: ((Int) -> Unit)? = null
     //월이 변경 될때 날짜도 자동으로 같이 변경될지
     private var smartSelectedDay: Boolean = true
     private lateinit var pager: ViewPager
@@ -63,9 +64,11 @@ class CalendarPagerFragment : android.support.v4.app.Fragment() {
         when (obj) {
             is Long -> {
                 selectedDay = obj
-                onSelectedDayChange?.invoke(obj)
+                onChangeSelectedDay?.invoke(obj)
                 pager.setCurrentItem(toPosition(selectedDay), false)
-//                pager.currentItem = toPosition(obj)
+            }
+            is Int -> {
+                onWeekClickListener?.invoke(obj)
             }
         }
     }
@@ -80,7 +83,7 @@ class CalendarPagerFragment : android.support.v4.app.Fragment() {
         pager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
             override fun onPageSelected(position: Int) {
                 Log.e("toDisplayMonth")
-                onPageChange?.invoke(toDisplayMonth(position))
+                onChangeMonth?.invoke(toDisplayMonth(position))
                 if (smartSelectedDay) {
                     val displayMoth = toDisplayMonth(position)
                     selectedDay = getSmartSelectedDay(displayMoth, selectedDay)
@@ -208,13 +211,18 @@ class CalendarPagerFragment : android.support.v4.app.Fragment() {
     fun getCurrentMonth() = toDisplayMonth(pager.currentItem)
 
     @Suppress("unused")
-    fun setOnChangeMonth(callback: (month: Long) -> Unit) {
-        this.onPageChange = callback
+    fun setOnChangeMonthListener(callback: (month: Long) -> Unit) {
+        this.onChangeMonth = callback
     }
 
     @Suppress("unused")
-    fun setOnChangeSelectedDay(callback: (selectedDay: Long) -> Unit) {
-        this.onPageChange = callback
+    fun setOnChangeSelectedDayListener(callback: (selectedDay: Long) -> Unit) {
+        this.onChangeSelectedDay = callback
+    }
+
+    @Suppress("unused")
+    fun setOnWeekClickListener(callback: (dayOfWeek: Int) -> Unit) {
+        this.onWeekClickListener = callback
     }
 
 }
