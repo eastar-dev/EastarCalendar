@@ -1,8 +1,10 @@
 package dev.eastar.calendar
 
+import CalendarObservable
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Rect
+import android.os.log
 import android.util.AttributeSet
 import android.view.GestureDetector
 import android.view.MotionEvent
@@ -23,8 +25,14 @@ class CalendarMonthView @JvmOverloads constructor(context: Context, attrs: Attri
     private var displayMonth: Long = 0//보여지고있는월
 
     fun setDisplayMonth(displayMonth: Long) {
+//        displayMonth.log()
         this.displayMonth = displayMonth
-        dayFirst = CalendarUtil.getFirstWeek(displayMonth)
+
+        val cal = Calendar.getInstance()
+        cal.timeInMillis = displayMonth
+        cal.set(Calendar.DAY_OF_WEEK, cal.firstDayOfWeek)
+        dayFirst = cal.timeInMillis
+//        dayFirst.log()
     }
 
     private var monthWidth: Int = 0
@@ -68,9 +76,10 @@ class CalendarMonthView @JvmOverloads constructor(context: Context, attrs: Attri
         CalendarObservable.deleteObserver(observer)
     }
 
-    private val observer = Observer { _: Observable, o: Any ->
-        if (o is Long) {
-            selectedDay = o
+    private val observer = Observer { _: Observable, selectDay: Any ->
+        if (selectDay is Long) {
+            selectedDay = selectDay
+            selectedDay.log()
             invalidate()
         }
     }

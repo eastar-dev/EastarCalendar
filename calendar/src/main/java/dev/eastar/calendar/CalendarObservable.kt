@@ -1,13 +1,13 @@
-package dev.eastar.calendar
 
 import android.log.Log
+import android.os.log
 import java.util.*
 
 object CalendarObservable : Observable() {
-    fun notifySelectedDay(daySelected: Long) {
-        daySelected.log()
+    fun notifySelectedDay(selectDay: Long) {
+        selectDay.log()
         setChanged()
-        super.notifyObservers(daySelected)
+        super.notifyObservers(selectDay)
     }
 
     fun notifySelectedWeek(dayOfWeek: Int) {

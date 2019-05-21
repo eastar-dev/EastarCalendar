@@ -1,6 +1,7 @@
 package dev.eastar.calendar.tools
 
 import android.graphics.*
+import android.os.log
 import dev.eastar.calendar.*
 import java.util.*
 
@@ -29,15 +30,15 @@ class DayDrawerImpl : DayDrawer {
         }
     }
 
-    override fun draw(canvas: Canvas, rc: Rect, day: Long, dayStandard: Long, daySelected: Long) {
-        drawDay(canvas, rc, day, dayStandard, daySelected)
-        drawState(canvas, rc, day, dayStandard, daySelected)
+    override fun draw(canvas: Canvas, rc: Rect, day: Long, displayMonth: Long, selectedDay: Long) {
+        drawDay(canvas, rc, day, displayMonth, selectedDay)
+        drawState(canvas, rc, day, displayMonth, selectedDay)
     }
 
-    override fun drawDay(canvas: Canvas, rc: Rect, day: Long, dayStandard: Long, daySelected: Long) {
+    override fun drawDay(canvas: Canvas, rc: Rect, day: Long, displayMonth: Long, selectedDay: Long) {
         val isToday = CalendarUtil.equalDay(day, System.currentTimeMillis())
-        val isSameMonth = CalendarUtil.equalMonth(day, dayStandard)
-        val isSelectedDay = isSameMonth && CalendarUtil.equalDay(day, daySelected)
+        val isSameMonth = CalendarUtil.equalMonth(day, displayMonth)
+        val isSelectedDay = isSameMonth && CalendarUtil.equalDay(day, selectedDay)
 
         val cal = Calendar.getInstance()
         cal.timeInMillis = day
@@ -79,7 +80,7 @@ class DayDrawerImpl : DayDrawer {
         }
     }
 
-    override fun drawState(canvas: Canvas, rc: Rect, day: Long, dayStandard: Long, daySelected: Long) {
+    override fun drawState(canvas: Canvas, rc: Rect, day: Long, displayMonth: Long, selectedDay: Long) {
 //        val dayData = ViewModelProviders.of(mContext as FragmentActivity).get(CalDataViewModel::class.java).getDayData(day) ?: return
 //
 //        val h = dayData.HISTORY.size > 0

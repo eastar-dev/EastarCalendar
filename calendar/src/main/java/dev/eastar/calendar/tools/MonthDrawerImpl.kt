@@ -5,6 +5,6 @@ import android.graphics.Rect
 import dev.eastar.calendar.MonthDrawer
 
 class MonthDrawerImpl : MonthDrawer {
-    override fun draw(canvas: Canvas, rect: Rect, dayFirst: Long, col: Int, row: Int) {
+    override fun draw(canvas: Canvas, rect: Rect, firstDay: Long, col: Int, row: Int) {
     }
 }
