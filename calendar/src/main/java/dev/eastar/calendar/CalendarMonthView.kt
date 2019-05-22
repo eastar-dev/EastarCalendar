@@ -3,6 +3,8 @@ package dev.eastar.calendar
 import CalendarObservable
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
 import android.graphics.Rect
 import android.os.log
 import android.util.AttributeSet
@@ -18,6 +20,7 @@ class CalendarMonthView @JvmOverloads constructor(context: Context, attrs: Attri
         private var RECT = Rect()
     }
 
+    private var pressDay: Long = -1
     private var selectedDay: Long = 0//달력에서 선택한날
     private var dayFirst: Long = 0//보여지는 시작일
     private var displayMonth: Long = 0//보여지고있는월
@@ -46,7 +49,7 @@ class CalendarMonthView @JvmOverloads constructor(context: Context, attrs: Attri
         weekWidth = Math.round((w / Calendar.DAY_OF_WEEK).toDouble()).toInt()
         weekHeight = WEEK_HEIGHT
         dayWidth = Math.round((w / Calendar.DAY_OF_WEEK).toDouble()).toInt()
-        dayHeight = Math.round((h / WEEK_COUNT).toDouble()).toInt()
+        dayHeight = Math.round(((h - WEEK_HEIGHT) / WEEK_COUNT).toDouble()).toInt()
     }
 
 //    private var monthDrawer: MonthDrawer? = MonthDrawerImpl()
@@ -125,25 +128,26 @@ class CalendarMonthView @JvmOverloads constructor(context: Context, attrs: Attri
             canvas.translate(x.toFloat(), y.toFloat())
             RECT.set(0, 0, dayWidth, dayHeight)
             CalendarPagerFragment.dayDrawer?.draw(canvas, RECT, day, displayMonth, selectedDay)
+            if (day == pressDay) canvas.drawRect(RECT, Paint().apply { color = Color.parseColor("#55ff0000") })
+
 
             canvas.restore()
         }
     }
 
-    fun stateChange(e: MotionEvent) {
-        if (e.x < 0 || e.y < 0 || monthWidth < e.x || monthHeight < e.y)
-            return
-
-        playSoundEffect(SoundEffectConstants.CLICK)
-        if (e.y < weekHeight) {
-//            CalendarObservable.notifySelectedWeek(firstDayOfWeek + (e.x / dayWidth).toInt())
-            return
+    fun stateChange(e: MotionEvent?) {
+        var pressDay = if (e == null || e.x < 0 || e.y < 0 || monthWidth < e.x || monthHeight < e.y || e.y < weekHeight) {
+            -1
+        } else {
+            val xAxle = (e.x / dayWidth).toInt()
+            val yAxle = ((e.y - weekHeight) / dayHeight).toInt()
+            val index = xAxle + yAxle * Calendar.DAY_OF_WEEK
+            (dayFirst + DAY1 * index.toLong()).also { it.log() }
         }
-        val xAxle = (e.x / dayWidth).toInt()
-        val yAxle = ((e.y - weekHeight) / dayHeight).toInt()
-        val index = xAxle + yAxle * Calendar.DAY_OF_WEEK
-        (dayFirst + DAY1 * index.toLong()).log()
-//        CalendarObservable.notifySelectedDay(dayFirst + DAY1 * index.toLong())
+        if (this.pressDay != pressDay) {
+            this.pressDay = pressDay
+            invalidate()
+        }
     }
 
     private fun hitTest(e: MotionEvent): Boolean {
@@ -175,13 +179,13 @@ class CalendarMonthView @JvmOverloads constructor(context: Context, attrs: Attri
     }
 
     inner class OnGestureListenerEx : GestureDetector.OnGestureListener {
-        override fun onDown(e: MotionEvent?) = stateChange(e!!).let { true }
-        fun onUp(e: MotionEvent) = stateChange(e)
+        override fun onDown(e: MotionEvent?) = stateChange(e).let { true }
+        fun onUp(e: MotionEvent) = stateChange(null)
         override fun onSingleTapUp(e: MotionEvent?) = hitTest(e!!)
+        override fun onScroll(e1: MotionEvent?, e2: MotionEvent?, distanceX: Float, distanceY: Float) = stateChange(e2).let { false }
 
         override fun onShowPress(e: MotionEvent?) {}
         override fun onFling(e1: MotionEvent?, e2: MotionEvent?, velocityX: Float, velocityY: Float) = false
-        override fun onScroll(e1: MotionEvent?, e2: MotionEvent?, distanceX: Float, distanceY: Float) = false
         override fun onLongPress(e: MotionEvent?) {}
     }
 }
