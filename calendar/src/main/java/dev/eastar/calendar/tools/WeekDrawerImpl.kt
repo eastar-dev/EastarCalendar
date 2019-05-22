@@ -6,7 +6,7 @@ import dev.eastar.calendar.WeekDrawer
 import dev.eastar.calendar.dayOfWeekColors
 import java.util.*
 
-class WeekDrawerImpl : WeekDrawer {
+open class WeekDrawerImpl : WeekDrawer {
 
     val dayOfWeekTextPaint by lazy {
         Paint(Paint.ANTI_ALIAS_FLAG or Paint.DITHER_FLAG).apply {

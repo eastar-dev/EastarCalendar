@@ -1,11 +1,10 @@
 package dev.eastar.calendar.tools
 
 import android.graphics.*
-import android.os.log
 import dev.eastar.calendar.*
 import java.util.*
 
-class DayDrawerImpl : DayDrawer {
+open class DayDrawerImpl : DayDrawer {
     // 테두리
     private val selectedPaint by lazy {
         Paint(Paint.ANTI_ALIAS_FLAG or Paint.DITHER_FLAG).apply {

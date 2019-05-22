@@ -13,12 +13,30 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.DatePicker
+import dev.eastar.calendar.tools.DayDrawerImpl
+import dev.eastar.calendar.tools.MonthDrawerImpl
+import dev.eastar.calendar.tools.WeekDrawerImpl
 import java.util.*
 
 //pager 달력
 class CalendarPagerFragment : android.support.v4.app.Fragment() {
     companion object {
         const val pagerCount = 12 * 100 //100년
+        var weekDrawer: WeekDrawer? = WeekDrawerImpl()
+        var monthDrawer: MonthDrawer? = MonthDrawerImpl()
+        var dayDrawer: DayDrawer? = DayDrawerImpl()
+    }
+
+    public fun setMonthDrawer(monthDrawer: MonthDrawer?) {
+        Companion.monthDrawer = monthDrawer
+    }
+
+    public fun setWeekDrawer(weekDrawer: WeekDrawer?) {
+        Companion.weekDrawer = weekDrawer
+    }
+
+    public fun setDayDrawer(dayDrawer: DayDrawer?) {
+        Companion.dayDrawer = dayDrawer
     }
 
     private var onChangeMonth: ((Long) -> Unit)? = null
@@ -29,17 +47,7 @@ class CalendarPagerFragment : android.support.v4.app.Fragment() {
     private lateinit var pager: ViewPager
     private var selectedDay = System.currentTimeMillis()
     private var centerMonth = System.currentTimeMillis()
-    private val startDay
-        get() = Calendar.getInstance().apply {
-            timeInMillis = centerMonth
-            set(Calendar.DATE, 1)
-            set(Calendar.HOUR, 0)
-            set(Calendar.MINUTE, 0)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
-            add(Calendar.MONTH, -pagerCount / 2)
-        }.timeInMillis
-                .also { it.log() }
+    private var startDay = getStartDay(centerMonth)
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         Log.e("hello calendar pager")
@@ -94,19 +102,6 @@ class CalendarPagerFragment : android.support.v4.app.Fragment() {
         pager.setCurrentItem(toPosition(selectedDay), false)
     }
 
-    //월이동시 적당한(?) 선택일을 가져온다
-    fun getSmartSelectedDay(dayStandard: Long, daySelected: Long): Long {
-        val cal = Calendar.getInstance()
-        cal.timeInMillis = daySelected
-        val day = cal.get(Calendar.DATE)
-
-        cal.timeInMillis = dayStandard
-        cal.set(Calendar.DATE, Math.min(day, cal.getActualMaximum(Calendar.DAY_OF_MONTH)))
-        val result = cal.timeInMillis
-        result.log()
-        return result
-    }
-
     //-----------------------------------------------------------------------------------------
     private inner class DAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
         override fun getItem(position: Int): Fragment {
@@ -115,34 +110,53 @@ class CalendarPagerFragment : android.support.v4.app.Fragment() {
 
         override fun getCount() = pagerCount
     }
+    //-----------------------------------------------------------------------------------------
+
+    private fun getStartDay(centerMonth: Long) = Calendar.getInstance().apply {
+        timeInMillis = centerMonth
+        set(Calendar.DATE, 1)
+        set(Calendar.HOUR_OF_DAY, 0)
+        set(Calendar.MINUTE, 0)
+        set(Calendar.SECOND, 0)
+        set(Calendar.MILLISECOND, 0)
+        add(Calendar.MONTH, -pagerCount / 2)
+    }.timeInMillis
+            .also { it.log() }
+
+    private fun getSmartSelectedDay(displayMonth: Long, selectDay: Long) = Calendar.getInstance().apply {
+        timeInMillis = selectDay
+        val day = get(Calendar.DATE)
+
+        timeInMillis = displayMonth
+        set(Calendar.DATE, Math.min(day, getActualMaximum(Calendar.DAY_OF_MONTH)))
+    }.timeInMillis
+            .also { it.log() }
 
     private fun toPosition(timeInMillis: Long): Int {
         return distance(startDay, timeInMillis, Calendar.MONTH)
     }
 
-    fun toDisplayMonth(position: Int): Long = Calendar.getInstance().run {
+    fun toDisplayMonth(position: Int) = Calendar.getInstance().apply {
         timeInMillis = startDay
         add(Calendar.MONTH, position)
         set(Calendar.DATE, getActualMinimum(Calendar.DATE))
-        return timeInMillis
-    }
+    }.timeInMillis
 
     //util
-    private fun showDatePickerDialog(current: Long = System.currentTimeMillis(), max: Long = 0L, min: Long = 0L, onDateSetListener: (DatePicker, Int, Int, Int) -> Unit) {
-        if (max > 0 && min > 0 && min > max)
-            throw IllegalArgumentException("min > max")
-        if (max > 0 && min > 0 && min > current)
-            Log.w("IllegalArgumentException(\"min > current\")")
-        if (max > 0 && min > 0 && current > max)
-            Log.w("IllegalArgumentException(\"current > max\")")
+    private fun showDatePickerDialog(current: Long = System.currentTimeMillis(), maximim: Long? = null, minimum: Long? = null, onDateSetListener: (DatePicker, Int, Int, Int) -> Unit) {
+        var cur: Long = current
+        var min: Long? = minimum
+        var max: Long? = maximim
 
-        val cal = Calendar.getInstance()
-        cal.timeInMillis = current
-        val dpd = DatePickerDialog(context, onDateSetListener, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DATE))
-        if (max > 0)
-            dpd.datePicker.maxDate = max
-        if (min > 0)
-            dpd.datePicker.minDate = min
+        if (min != null && max != null && min > max) max = min.also { min = max }
+        if (max != null && cur > max) cur = max
+        if (min != null && cur < min!!) cur = min!!
+
+        val cal = Calendar.getInstance().apply { timeInMillis = cur }
+        val dpd = DatePickerDialog(context!!, onDateSetListener, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DATE))
+        max?.let { dpd.datePicker.maxDate = it }
+        min?.let { dpd.datePicker.minDate = it }
+
         dpd.show()
     }
 
@@ -194,6 +208,7 @@ class CalendarPagerFragment : android.support.v4.app.Fragment() {
     @Suppress("unused")
     public fun move(selectedDay: Long) {
         centerMonth = selectedDay
+        startDay = centerMonth
         CalendarObservable.notifySelectedDay(selectedDay)
     }
 
@@ -224,5 +239,4 @@ class CalendarPagerFragment : android.support.v4.app.Fragment() {
     fun setOnWeekClickListener(callback: (dayOfWeek: Int) -> Unit) {
         this.onWeekClickListener = callback
     }
-
 }

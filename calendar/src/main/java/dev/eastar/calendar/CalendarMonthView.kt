@@ -10,9 +10,6 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.SoundEffectConstants
 import android.view.View
-import dev.eastar.calendar.tools.DayDrawerImpl
-import dev.eastar.calendar.tools.MonthDrawerImpl
-import dev.eastar.calendar.tools.WeekDrawerImpl
 import java.util.*
 
 //달력부분
@@ -52,20 +49,20 @@ class CalendarMonthView @JvmOverloads constructor(context: Context, attrs: Attri
         dayHeight = Math.round((h / WEEK_COUNT).toDouble()).toInt()
     }
 
-    private var monthDrawer: MonthDrawer = MonthDrawerImpl()
-    public fun setMonthDrawer(monthDrawer: MonthDrawer) {
-        this.monthDrawer = monthDrawer
-    }
-
-    private var weekDrawer: WeekDrawer? = WeekDrawerImpl()
-    public fun setWeekDrawer(weekDrawer: WeekDrawer?) {
-        this.weekDrawer = weekDrawer
-    }
-
-    private var dayDrawer: DayDrawer = DayDrawerImpl()
-    public fun setDayDrawer(dayDrawer: DayDrawer) {
-        this.dayDrawer = dayDrawer
-    }
+//    private var monthDrawer: MonthDrawer? = MonthDrawerImpl()
+//    private var weekDrawer: WeekDrawer? = WeekDrawerImpl()
+//    private var dayDrawer: DayDrawer? = DayDrawerImpl()
+//    public fun setMonthDrawer(monthDrawer: MonthDrawer?) {
+//        this.monthDrawer = monthDrawer
+//    }
+//
+//    public fun setWeekDrawer(weekDrawer: WeekDrawer?) {
+//        this.weekDrawer = weekDrawer
+//    }
+//
+//    public fun setDayDrawer(dayDrawer: DayDrawer?) {
+//        this.dayDrawer = dayDrawer
+//    }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
@@ -80,7 +77,7 @@ class CalendarMonthView @JvmOverloads constructor(context: Context, attrs: Attri
     private val observer = Observer { _: Observable, selectDay: Any ->
         if (selectDay is Long) {
             selectedDay = selectDay
-            selectedDay.log()
+//            selectedDay.log()
             invalidate()
         }
     }
@@ -93,10 +90,10 @@ class CalendarMonthView @JvmOverloads constructor(context: Context, attrs: Attri
 
         //month
         RECT.set(0, 0, monthWidth, monthHeight)
-        monthDrawer.draw(canvas, RECT, dayFirst, row, col)
+        CalendarPagerFragment.monthDrawer?.draw(canvas, RECT, dayFirst, row, col)
 
         RECT.set(0, 0, monthWidth, weekHeight)
-        weekDrawer?.draw(canvas, RECT)
+        CalendarPagerFragment.weekDrawer?.draw(canvas, RECT)
 
         //week
         for (i in 0 until col) {
@@ -109,7 +106,7 @@ class CalendarMonthView @JvmOverloads constructor(context: Context, attrs: Attri
 
             val dayOfWeek = (firstDayOfWeek + i - Calendar.SUNDAY) % Calendar.DAY_OF_WEEK + Calendar.SUNDAY
             RECT.set(0, 0, weekWidth, weekHeight)
-            weekDrawer?.draw(canvas, RECT, dayOfWeek)
+            CalendarPagerFragment.weekDrawer?.draw(canvas, RECT, dayOfWeek)
             canvas.restore()
         }
 
@@ -127,35 +124,64 @@ class CalendarMonthView @JvmOverloads constructor(context: Context, attrs: Attri
 
             canvas.translate(x.toFloat(), y.toFloat())
             RECT.set(0, 0, dayWidth, dayHeight)
-            dayDrawer.draw(canvas, RECT, day, displayMonth, selectedDay)
+            CalendarPagerFragment.dayDrawer?.draw(canvas, RECT, day, displayMonth, selectedDay)
 
             canvas.restore()
         }
     }
 
-    private fun hitTest(e: MotionEvent) {
+    fun stateChange(e: MotionEvent) {
+        if (e.x < 0 || e.y < 0 || monthWidth < e.x || monthHeight < e.y)
+            return
+
         playSoundEffect(SoundEffectConstants.CLICK)
         if (e.y < weekHeight) {
-            CalendarObservable.notifySelectedWeek(firstDayOfWeek + (e.x / dayWidth).toInt())
+//            CalendarObservable.notifySelectedWeek(firstDayOfWeek + (e.x / dayWidth).toInt())
             return
         }
         val xAxle = (e.x / dayWidth).toInt()
         val yAxle = ((e.y - weekHeight) / dayHeight).toInt()
         val index = xAxle + yAxle * Calendar.DAY_OF_WEEK
+        (dayFirst + DAY1 * index.toLong()).log()
+//        CalendarObservable.notifySelectedDay(dayFirst + DAY1 * index.toLong())
+    }
+
+    private fun hitTest(e: MotionEvent): Boolean {
+        if (e.x < 0 || e.y < 0 || monthWidth < e.x || monthHeight < e.y)
+            return false
+
+        playSoundEffect(SoundEffectConstants.CLICK)
+        if (e.y < weekHeight) {
+            CalendarObservable.notifySelectedWeek(firstDayOfWeek + (e.x / dayWidth).toInt())
+            return true
+        }
+        val xAxle = (e.x / dayWidth).toInt()
+        val yAxle = ((e.y - weekHeight) / dayHeight).toInt()
+        val index = xAxle + yAxle * Calendar.DAY_OF_WEEK
         CalendarObservable.notifySelectedDay(dayFirst + DAY1 * index.toLong())
+        return true
     }
 
     //------------------------------------------------------------------------------------------
-    override fun onTouchEvent(event: MotionEvent) = detector.onTouchEvent(event)
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        val consume = detector.onTouchEvent(event)
+        if (event.actionMasked == MotionEvent.ACTION_UP) onGestureListener.onUp(event)
+        return consume
+    }
 
-    private val detector = GestureDetector(getContext(), object : GestureDetector.SimpleOnGestureListener() {
-        override fun onDown(e: MotionEvent): Boolean {
-            return true
-        }
+    private val onGestureListener = OnGestureListenerEx()
+    private val detector = GestureDetector(getContext(), onGestureListener).apply {
+        setIsLongpressEnabled(false)
+    }
 
-        override fun onSingleTapUp(e: MotionEvent): Boolean {
-            hitTest(e)
-            return false
-        }
-    })
+    inner class OnGestureListenerEx : GestureDetector.OnGestureListener {
+        override fun onDown(e: MotionEvent?) = stateChange(e!!).let { true }
+        fun onUp(e: MotionEvent) = stateChange(e)
+        override fun onSingleTapUp(e: MotionEvent?) = hitTest(e!!)
+
+        override fun onShowPress(e: MotionEvent?) {}
+        override fun onFling(e1: MotionEvent?, e2: MotionEvent?, velocityX: Float, velocityY: Float) = false
+        override fun onScroll(e1: MotionEvent?, e2: MotionEvent?, distanceX: Float, distanceY: Float) = false
+        override fun onLongPress(e: MotionEvent?) {}
+    }
 }

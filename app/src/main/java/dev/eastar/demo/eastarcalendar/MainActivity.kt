@@ -1,6 +1,7 @@
 package dev.eastar.demo.eastarcalendar
 
 import android.content.Context
+import android.graphics.*
 import android.log.Log
 import android.os.Bundle
 import android.support.design.widget.Snackbar
@@ -12,6 +13,9 @@ import android.widget.Toast
 import dev.eastar.calendar.CalendarPagerFragment
 import dev.eastar.calendar.day
 import dev.eastar.calendar.month
+import dev.eastar.calendar.tools.DayDrawerImpl
+import dev.eastar.calendar.tools.MonthDrawerImpl
+import dev.eastar.calendar.tools.WeekDrawerImpl
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import java.util.*
@@ -27,7 +31,6 @@ class MainActivity : AppCompatActivity() {
                     .setAction("Action", null).show()
         }
         val calendarPager: CalendarPagerFragment = Fragment.instantiate(this, CalendarPagerFragment::class.java.name, null) as CalendarPagerFragment
-        supportFragmentManager.beginTransaction().replace(R.id.container, calendarPager).commit()
         prev.setOnClickListener { calendarPager.prev() }
         next.setOnClickListener { calendarPager.next() }
         month.setOnClickListener { calendarPager.move() }
@@ -44,6 +47,17 @@ class MainActivity : AppCompatActivity() {
             Log.e(it)
             toast(Calendar.getInstance().apply { set(Calendar.DAY_OF_WEEK, it) }.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault()))
         }
+        calendarPager.setDayDrawer(object : DayDrawerImpl() {
+            override fun drawState(canvas: Canvas, rc: Rect, day: Long, displayMonth: Long, selectedDay: Long) {
+                canvas.drawRoundRect(RectF(rc).apply { inset(1F, 1F) }, 3F, 3F, Paint().apply { color = Color.parseColor("#55ff0000") })
+                super.drawState(canvas, rc, day, displayMonth, selectedDay)
+            }
+        })
+        calendarPager.setWeekDrawer(object : WeekDrawerImpl() {
+        })
+        calendarPager.setMonthDrawer(object : MonthDrawerImpl() {
+        })
+        supportFragmentManager.beginTransaction().replace(R.id.container, calendarPager).commit()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
