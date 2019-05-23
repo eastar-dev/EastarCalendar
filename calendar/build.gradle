@@ -2,8 +2,8 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
-//apply plugin: 'com.github.dcendents.android-maven'
-//group = 'com.github.djrain'
+apply plugin: 'com.github.dcendents.android-maven'
+group = 'com.github.djrain'
 
 //uploadArchives {
 //    repositories {
@@ -35,6 +35,5 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:28.0.0'
-
     implementation 'com.github.djrain:log:3.0.4'
 }
