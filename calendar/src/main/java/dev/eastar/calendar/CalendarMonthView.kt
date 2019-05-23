@@ -169,7 +169,10 @@ class CalendarMonthView @JvmOverloads constructor(context: Context, attrs: Attri
     //------------------------------------------------------------------------------------------
     override fun onTouchEvent(event: MotionEvent): Boolean {
         val consume = detector.onTouchEvent(event)
-        if (event.actionMasked == MotionEvent.ACTION_UP) onGestureListener.onUp(event)
+        when {
+            event.actionMasked == MotionEvent.ACTION_UP -> onGestureListener.onUp(event)
+            event.actionMasked == MotionEvent.ACTION_CANCEL -> onGestureListener.onUp(event)
+        }
         return consume
     }
 
