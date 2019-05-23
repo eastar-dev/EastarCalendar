@@ -2,15 +2,17 @@
 
 ## Eastar Calendar?
 
-어느날 갑자기 만들고 싶어진 라이브러리
-canvas base로 직접 캘린더를 직접 그림(속도가 빠름)
-좀더 빠르도록 개선의 여지가 있지만 현재 상태에서 불편함이 없어서 그냥 사용한다.
+* 어느날 갑자기 만들고 싶어진 라이브러리
+* canvas base로 직접 캘린더를 직접 그림(속도가 빠름)
+* 좀더 빠르도록 개선의 여지(double buffering, invalidate rect)가 있지만 현재 상태에서 불편함이 없어서 그냥 사용
+* Kotlin으로 작성되었습니다.
+* support pack을 사용합니다.
 
 ## What different Eastar Calendar?
 
-아랍권의 calendar 형태를 지원합니다.
-canvas에서 날짜 표시부를 표현 하도록 했기때문에 빠릅니다.
-구현부에서 drawer를 재공 받아서 표현 하기때문에 모든 형태의 표현이 가능합니다.
+* 아랍권의 calendar 형태를 지원합니다.
+* canvas에서 날짜 표시부를 표현 하도록 했기때문에 빠릅니다.
+* 구현부에서 drawer를 재공 받아서 표현 하기때문에 거의 모든 형태의 표현이 가능합니다.
 
 ## What's new?
 
