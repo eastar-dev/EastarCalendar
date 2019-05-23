@@ -52,6 +52,92 @@ dependencies {
 }
 ```
 
+## How to use
+
+
+### 1. Make PermissionListener
+We will use PermissionListener for Permission Result.
+You will get result to `onPermissionGranted()`, `onPermissionDenied()`
+
+```javascript
+private fun setEasrarCalendar() {
+    val calendarPager: CalendarPagerFragment = 
+        Fragment.instantiate(this, CalendarPagerFragment::class.java.name, null) as CalendarPagerFragment
+    setEastarCalendarEvent(calendarPager)
+    setEastarCalendarDrawer(calendarPager)
+    supportFragmentManager.beginTransaction().replace(R.id.container, calendarPager).commit()
+}
+
+private fun setEastarCalendarEvent(calendarPager: CalendarPagerFragment) {
+    prev.setOnClickListener { calendarPager.prev() }
+    next.setOnClickListener { calendarPager.next() }
+    month.setOnClickListener { calendarPager.move() }
+
+    calendarPager.setOnChangeMonthListener { month.text = it.month }
+    calendarPager.setOnChangeSelectedDayListener { toast(it.day) }
+    calendarPager.setOnWeekClickListener { toast(getDisplayShortName(it)) }
+}
+
+
+private fun setEastarCalendarDrawer(calendarPager: CalendarPagerFragment) {
+    calendarPager.setCalendarDrawer(object : CalendarDrawerImpl() {
+        //month bg
+        override fun drawMonthBg(canvas: Canvas, rect: Rect, firstDay: Long, col: Int, row: Int) {
+            super.drawMonthBg(canvas, rect, firstDay, col, row)
+        }
+
+        //week
+        override fun drawWeekBG(canvas: Canvas, rect: Rect) {
+            super.drawWeekBG(canvas, rect)
+        }
+
+        override fun drawWeekItem(canvas: Canvas, rect: Rect, dayOfWeek: Int) {
+            super.drawWeekItem(canvas, rect, dayOfWeek)
+        }
+
+        override fun drawDay(canvas: Canvas, rc: Rect, day: Long, displayMonth: Long, selectedDay: Long, pressedDay: Long) {
+            super.drawDay(canvas, rc, day, displayMonth, selectedDay, pressedDay)
+        }
+
+        override fun drawDayItem(canvas: Canvas, rc: Rect, day: Long, displayMonth: Long, selectedDay: Long) {
+            super.drawDayItem(canvas, rc, day, displayMonth, selectedDay)
+        }
+
+        override fun drawDayState(canvas: Canvas, rc: Rect, day: Long, displayMonth: Long, selectedDay: Long) {
+            super.drawDayState(canvas, rc, day, displayMonth, selectedDay)
+        }
+
+        override fun drawDaySelected(canvas: Canvas, rc: Rect, day: Long, displayMonth: Long, selectedDay: Long, pressedDay: Long) {
+            super.drawDaySelected(canvas, rc, day, displayMonth, selectedDay, pressedDay)
+        }
+
+        override fun drawDayPressed(canvas: Canvas, rc: Rect, day: Long, displayMonth: Long, selectedDay: Long, pressedDay: Long) {
+            super.drawDayPressed(canvas, rc, day, displayMonth, selectedDay, pressedDay)
+        }
+    })
+}
+```
+
+<br/>
+
+##Customize
+You can customize something ...<br />
+
+CalendarSetting.kt
+```javascript
+
+val WEEK_HEIGHT: Int = 25.dp
+val TEXT_SIZE = 14.dp
+```
+
+<br/><br/>
+
+
+
+
+
+## Thanks 
+
 ## License 
  ```code
 Copyright 2019 eastar Jeong
