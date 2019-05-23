@@ -2,6 +2,8 @@ package dev.eastar.calendar
 
 import android.graphics.Color
 import java.util.*
+import java.util.Calendar.DAY_OF_WEEK
+import java.util.Calendar.SHORT
 
 const val WEEK_COUNT = 6
 const val DAY1 = 86400000L
@@ -23,5 +25,22 @@ val dayOfWeekColors by lazy {
             , ((firstDayOfWeek + (Calendar.DAY_OF_WEEK - 1)) - Calendar.SUNDAY) % Calendar.DAY_OF_WEEK + Calendar.SUNDAY to Color.BLUE
     )
 }
+
+fun getDisplayShortName(dayOfWeek: Int) = Calendar.getInstance().run {
+    set(DAY_OF_WEEK, dayOfWeek)
+    getDisplayName(DAY_OF_WEEK, SHORT, Locale.getDefault())
+}
+
+val dayOfWeekTexts by lazy {
+    mapOf(Calendar.SUNDAY to getDisplayShortName(Calendar.SUNDAY),
+            Calendar.MONDAY to getDisplayShortName(Calendar.MONDAY),
+            Calendar.TUESDAY to getDisplayShortName(Calendar.TUESDAY),
+            Calendar.WEDNESDAY to getDisplayShortName(Calendar.WEDNESDAY),
+            Calendar.THURSDAY to getDisplayShortName(Calendar.THURSDAY),
+            Calendar.FRIDAY to getDisplayShortName(Calendar.FRIDAY),
+            Calendar.SATURDAY to getDisplayShortName(Calendar.SATURDAY)
+    )
+}
+
 
 

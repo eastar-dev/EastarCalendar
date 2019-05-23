@@ -2,7 +2,6 @@ package dev.eastar.demo.eastarcalendar
 
 import android.content.Context
 import android.graphics.*
-import android.log.Log
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
@@ -35,22 +34,28 @@ class MainActivity : AppCompatActivity() {
         next.setOnClickListener { calendarPager.next() }
         month.setOnClickListener { calendarPager.move() }
 
-        calendarPager.setOnChangeMonthListener {
-            Log.e(it.month)
-            month.text = it.month
-        }
-        calendarPager.setOnChangeSelectedDayListener {
-            Log.e(it.day)
-            toast(it.day)
-        }
+        calendarPager.setOnChangeMonthListener { month.text = it.month }
+        calendarPager.setOnChangeSelectedDayListener { toast(it.day) }
         calendarPager.setOnWeekClickListener {
-            Log.e(it)
             toast(Calendar.getInstance().apply { set(Calendar.DAY_OF_WEEK, it) }.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault()))
         }
         calendarPager.setDayDrawer(object : DayDrawerImpl() {
+            override fun draw(canvas: Canvas, rc: Rect, day: Long, displayMonth: Long, selectedDay: Long, pressedDay: Long) {
+                super.draw(canvas, rc, day, displayMonth, selectedDay, pressedDay)
+            }
+
+            override fun drawDay(canvas: Canvas, rc: Rect, day: Long, displayMonth: Long, selectedDay: Long) {
+                super.drawDay(canvas, rc, day, displayMonth, selectedDay)
+                canvas.drawRoundRect(RectF(rc).apply { inset(10F, 10F) }, 3F, 3F, Paint().apply { color = Color.parseColor("#550000ff") })
+            }
+
             override fun drawState(canvas: Canvas, rc: Rect, day: Long, displayMonth: Long, selectedDay: Long) {
-                canvas.drawRoundRect(RectF(rc).apply { inset(1F, 1F) }, 3F, 3F, Paint().apply { color = Color.parseColor("#55ff0000") })
                 super.drawState(canvas, rc, day, displayMonth, selectedDay)
+            }
+
+            override fun drawPressed(canvas: Canvas, rc: Rect, day: Long, displayMonth: Long, selectedDay: Long, pressedDay: Long) {
+                canvas.drawRoundRect(RectF(rc).apply { inset(1F, 1F) }, 3F, 3F, Paint().apply { color = Color.parseColor("#55ff0000") })
+                super.drawPressed(canvas, rc, day, displayMonth, selectedDay, pressedDay)
             }
         })
         calendarPager.setWeekDrawer(object : WeekDrawerImpl() {

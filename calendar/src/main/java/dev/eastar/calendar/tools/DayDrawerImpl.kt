@@ -29,12 +29,14 @@ open class DayDrawerImpl : DayDrawer {
         }
     }
 
-    override fun draw(canvas: Canvas, rc: Rect, day: Long, displayMonth: Long, selectedDay: Long) {
+    override fun draw(canvas: Canvas, rc: Rect, day: Long, displayMonth: Long, selectedDay: Long, pressedDay: Long) {
         drawDay(canvas, rc, day, displayMonth, selectedDay)
         drawState(canvas, rc, day, displayMonth, selectedDay)
+        if (day == pressedDay)
+            drawPressed(canvas, rc, day, displayMonth, selectedDay, pressedDay)
     }
 
-    override fun drawDay(canvas: Canvas, rc: Rect, day: Long, displayMonth: Long, selectedDay: Long) {
+    open fun drawDay(canvas: Canvas, rc: Rect, day: Long, displayMonth: Long, selectedDay: Long) {
         val isToday = CalendarUtil.equalDay(day, System.currentTimeMillis())
         val isSameMonth = CalendarUtil.equalMonth(day, displayMonth)
         val isSelectedDay = isSameMonth && CalendarUtil.equalDay(day, selectedDay)
@@ -79,21 +81,12 @@ open class DayDrawerImpl : DayDrawer {
         }
     }
 
-    override fun drawState(canvas: Canvas, rc: Rect, day: Long, displayMonth: Long, selectedDay: Long) {
-//        val dayData = ViewModelProviders.of(mContext as FragmentActivity).get(CalDataViewModel::class.java).getDayData(day) ?: return
-//
-//        val h = dayData.HISTORY.size > 0
-//        val i = dayData.INFO.size > 0
-//        val s = dayData.SCHEDULE.size > 0
-//        val a = dayData.SCHEDULE.size > 0
-//        val xCenter = rc.centerX().toFloat()
-//        if (h)
-//            canvas.drawCircle(xCenter, VV.dp2px(31f).toFloat(), VV.dp2px(3f).toFloat(), trP)  // 이체
-//        if (i)
-//            canvas.drawCircle(xCenter, VV.dp2px(39f).toFloat(), VV.dp2px(3f).toFloat(), alertP)  // 소식
-//        if (s)
-//            canvas.drawCircle(xCenter, VV.dp2px(47f).toFloat(), VV.dp2px(3f).toFloat(), scheduleP)  // 일정
-//        if (a)
-//            canvas.drawBitmap(bitmap, xCenter + VV.dp2px(9f), VV.dp2px(10f).toFloat(), alarmPaint)// 알람
+    open fun drawState(canvas: Canvas, rc: Rect, day: Long, displayMonth: Long, selectedDay: Long) {
+
     }
+
+    open fun drawPressed(canvas: Canvas, rc: Rect, day: Long, displayMonth: Long, selectedDay: Long, pressedDay: Long) {
+
+    }
+
 }

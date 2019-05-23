@@ -3,10 +3,7 @@ package dev.eastar.calendar
 import CalendarObservable
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
 import android.graphics.Rect
-import android.os.log
 import android.util.AttributeSet
 import android.view.GestureDetector
 import android.view.MotionEvent
@@ -20,7 +17,7 @@ class CalendarMonthView @JvmOverloads constructor(context: Context, attrs: Attri
         private var RECT = Rect()
     }
 
-    private var pressDay: Long = -1
+    private var pressedDay: Long = -1
     private var selectedDay: Long = 0//달력에서 선택한날
     private var dayFirst: Long = 0//보여지는 시작일
     private var displayMonth: Long = 0//보여지고있는월
@@ -100,10 +97,7 @@ class CalendarMonthView @JvmOverloads constructor(context: Context, attrs: Attri
 
         //week
         for (i in 0 until col) {
-            val x = if (resources.configuration.layoutDirection == LAYOUT_DIRECTION_LTR)
-                weekWidth * i
-            else
-                weekWidth * (Calendar.DAY_OF_WEEK - (i + 1))
+            val x = if (resources.configuration.layoutDirection == LAYOUT_DIRECTION_LTR) weekWidth * i else weekWidth * (Calendar.DAY_OF_WEEK - 1 - i)
             canvas.save()
             canvas.translate(x.toFloat(), 0f)
 
@@ -118,19 +112,13 @@ class CalendarMonthView @JvmOverloads constructor(context: Context, attrs: Attri
         //day
         for (i in 0 until dayCount) {
             val day = dayFirst + i * DAY1
-            val x = if (resources.configuration.layoutDirection == LAYOUT_DIRECTION_LTR)
-                dayWidth * (i % col)
-            else
-                weekWidth * (Calendar.DAY_OF_WEEK - (i % col + 1))
+            val x = if (resources.configuration.layoutDirection == LAYOUT_DIRECTION_LTR) dayWidth * (i % col) else weekWidth * (Calendar.DAY_OF_WEEK - 1 - i % col)
             val y = Math.round((dayHeight * (i / col)).toDouble()).toInt()
             canvas.save()
 
             canvas.translate(x.toFloat(), y.toFloat())
             RECT.set(0, 0, dayWidth, dayHeight)
-            CalendarPagerFragment.dayDrawer?.draw(canvas, RECT, day, displayMonth, selectedDay)
-            if (day == pressDay) canvas.drawRect(RECT, Paint().apply { color = Color.parseColor("#55ff0000") })
-
-
+            CalendarPagerFragment.dayDrawer?.draw(canvas, RECT, day, displayMonth, selectedDay, pressedDay)
             canvas.restore()
         }
     }
@@ -139,13 +127,14 @@ class CalendarMonthView @JvmOverloads constructor(context: Context, attrs: Attri
         var pressDay = if (e == null || e.x < 0 || e.y < 0 || monthWidth < e.x || monthHeight < e.y || e.y < weekHeight) {
             -1
         } else {
-            val xAxle = (e.x / dayWidth).toInt()
+            val xAxle = if (resources.configuration.layoutDirection == LAYOUT_DIRECTION_LTR) (e.x / dayWidth).toInt() else Calendar.DAY_OF_WEEK - 1 - (e.x / dayWidth).toInt()
             val yAxle = ((e.y - weekHeight) / dayHeight).toInt()
             val index = xAxle + yAxle * Calendar.DAY_OF_WEEK
-            (dayFirst + DAY1 * index.toLong()).also { it.log() }
+            (dayFirst + DAY1 * index.toLong())
+            //.also { it.log() }
         }
-        if (this.pressDay != pressDay) {
-            this.pressDay = pressDay
+        if (this.pressedDay != pressDay) {
+            this.pressedDay = pressDay
             invalidate()
         }
     }
@@ -159,7 +148,8 @@ class CalendarMonthView @JvmOverloads constructor(context: Context, attrs: Attri
             CalendarObservable.notifySelectedWeek(firstDayOfWeek + (e.x / dayWidth).toInt())
             return true
         }
-        val xAxle = (e.x / dayWidth).toInt()
+
+        val xAxle = if (resources.configuration.layoutDirection == LAYOUT_DIRECTION_LTR) (e.x / dayWidth).toInt() else Calendar.DAY_OF_WEEK - 1 - (e.x / dayWidth).toInt()
         val yAxle = ((e.y - weekHeight) / dayHeight).toInt()
         val index = xAxle + yAxle * Calendar.DAY_OF_WEEK
         CalendarObservable.notifySelectedDay(dayFirst + DAY1 * index.toLong())
@@ -169,9 +159,9 @@ class CalendarMonthView @JvmOverloads constructor(context: Context, attrs: Attri
     //------------------------------------------------------------------------------------------
     override fun onTouchEvent(event: MotionEvent): Boolean {
         val consume = detector.onTouchEvent(event)
-        when {
-            event.actionMasked == MotionEvent.ACTION_UP -> onGestureListener.onUp(event)
-            event.actionMasked == MotionEvent.ACTION_CANCEL -> onGestureListener.onUp(event)
+        when (event.actionMasked) {
+            MotionEvent.ACTION_UP -> onGestureListener.onUp(event)
+            MotionEvent.ACTION_CANCEL -> onGestureListener.onUp(event)
         }
         return consume
     }
