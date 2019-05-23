@@ -1,7 +1,7 @@
 package dev.eastar.calendar
 
 import android.content.res.Resources
-import android.log.Log
+//import android.log.Log
 import android.util.TypedValue
 import java.text.SimpleDateFormat
 import java.util.*
@@ -27,7 +27,7 @@ class CalendarUtil {
     }
 }
 
-fun Long.log() = Log.e(SimpleDateFormat("yyyy.MM.dd HH:mm:ss", Locale.getDefault()).format(Date(this)))
+//fun Long.log() = Log.e(SimpleDateFormat("yyyy.MM.dd HH:mm:ss", Locale.getDefault()).format(Date(this)))
 
 val Long.month: String get() = SimpleDateFormat("yyyy.M", Locale.getDefault()).format(Date(this))
 val Long.day: String get() = SimpleDateFormat("d", Locale.getDefault()).format(Date(this))

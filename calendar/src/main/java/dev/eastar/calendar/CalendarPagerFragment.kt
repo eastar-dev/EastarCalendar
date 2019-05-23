@@ -2,7 +2,7 @@ package dev.eastar.calendar
 
 import CalendarObservable
 import android.app.DatePickerDialog
-import android.log.Log
+//import android.log.Log
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
@@ -37,7 +37,7 @@ class CalendarPagerFragment : android.support.v4.app.Fragment() {
     private var startDay = getStartDay(centerMonth)
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        Log.e("hello calendar pager")
+//        Log.e("hello calendar pager")
         return ViewPager(inflater.context).apply {
             id = android.R.id.list
         }.also {
@@ -77,7 +77,7 @@ class CalendarPagerFragment : android.support.v4.app.Fragment() {
         pager.adapter = DAdapter(fragmentManager!!)
         pager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
             override fun onPageSelected(position: Int) {
-                Log.e("toDisplayMonth")
+//                Log.e("toDisplayMonth")
                 onChangeMonth?.invoke(toDisplayMonth(position))
                 if (smartSelectedDay) {
                     val displayMoth = toDisplayMonth(position)
@@ -110,7 +110,7 @@ class CalendarPagerFragment : android.support.v4.app.Fragment() {
         set(Calendar.MILLISECOND, 0)
         add(Calendar.MONTH, -pagerCount / 2)
     }.timeInMillis
-            .also { it.log() }
+//            .also { it.log() }
 
     private fun getSmartSelectedDay(displayMonth: Long, selectDay: Long) = Calendar.getInstance().apply {
         timeInMillis = selectDay
@@ -119,7 +119,7 @@ class CalendarPagerFragment : android.support.v4.app.Fragment() {
         timeInMillis = displayMonth
         set(Calendar.DATE, Math.min(day, getActualMaximum(Calendar.DAY_OF_MONTH)))
     }.timeInMillis
-            .also { it.log() }
+//            .also { it.log() }
 
     private fun toPosition(timeInMillis: Long): Int {
         return distance(startDay, timeInMillis, Calendar.MONTH)

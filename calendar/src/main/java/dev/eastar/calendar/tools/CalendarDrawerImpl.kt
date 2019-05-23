@@ -111,10 +111,10 @@ open class CalendarDrawerImpl : CalendarDrawer {
             strokeWidth = 1f.dp.toFloat()
         }
     }
+
     override fun drawDaySelected(canvas: Canvas, rc: Rect, day: Long, displayMonth: Long, selectedDay: Long, pressedDay: Long) {
         canvas.drawRect(rc, selectedPaint)    // 테두리
     }
-
 
     // 누르고있는동안표시됨
     private val pressedPaint by lazy {
