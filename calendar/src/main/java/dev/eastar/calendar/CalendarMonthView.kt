@@ -9,6 +9,7 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.SoundEffectConstants
 import android.view.View
+import dev.eastar.calendar.tools.CalendarDrawerImpl
 import java.util.*
 
 //달력부분
@@ -17,6 +18,7 @@ class CalendarMonthView @JvmOverloads constructor(context: Context, attrs: Attri
         private var RECT = Rect()
     }
 
+    private var calendarDrawer: CalendarDrawer = CalendarDrawerImpl()
     private var pressedDay: Long = -1
     private var selectedDay: Long = 0//달력에서 선택한날
     private var dayFirst: Long = 0//보여지는 시작일
@@ -90,10 +92,10 @@ class CalendarMonthView @JvmOverloads constructor(context: Context, attrs: Attri
 
         //month
         RECT.set(0, 0, monthWidth, monthHeight)
-        CalendarPagerFragment.monthDrawer?.draw(canvas, RECT, dayFirst, row, col)
+        calendarDrawer.drawMonthBg(canvas, RECT, dayFirst, row, col)
 
         RECT.set(0, 0, monthWidth, weekHeight)
-        CalendarPagerFragment.weekDrawer?.draw(canvas, RECT)
+        calendarDrawer.drawWeekBG(canvas, RECT)
 
         //week
         for (i in 0 until col) {
@@ -103,7 +105,7 @@ class CalendarMonthView @JvmOverloads constructor(context: Context, attrs: Attri
 
             val dayOfWeek = (firstDayOfWeek + i - Calendar.SUNDAY) % Calendar.DAY_OF_WEEK + Calendar.SUNDAY
             RECT.set(0, 0, weekWidth, weekHeight)
-            CalendarPagerFragment.weekDrawer?.draw(canvas, RECT, dayOfWeek)
+            calendarDrawer.drawWeekItem(canvas, RECT, dayOfWeek)
             canvas.restore()
         }
 
@@ -118,7 +120,7 @@ class CalendarMonthView @JvmOverloads constructor(context: Context, attrs: Attri
 
             canvas.translate(x.toFloat(), y.toFloat())
             RECT.set(0, 0, dayWidth, dayHeight)
-            CalendarPagerFragment.dayDrawer?.draw(canvas, RECT, day, displayMonth, selectedDay, pressedDay)
+            calendarDrawer.drawDay(canvas, RECT, day, displayMonth, selectedDay, pressedDay)
             canvas.restore()
         }
     }
@@ -164,6 +166,11 @@ class CalendarMonthView @JvmOverloads constructor(context: Context, attrs: Attri
             MotionEvent.ACTION_CANCEL -> onGestureListener.onUp(event)
         }
         return consume
+    }
+
+    fun setCalendarDrawer(calendarDrawer: CalendarDrawer) {
+        this.calendarDrawer = calendarDrawer
+
     }
 
     private val onGestureListener = object : GestureDetector.OnGestureListener {

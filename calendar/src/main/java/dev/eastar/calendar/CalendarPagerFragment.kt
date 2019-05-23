@@ -4,7 +4,6 @@ import CalendarObservable
 import android.app.DatePickerDialog
 import android.log.Log
 import android.os.Bundle
-import android.os.log
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
@@ -13,30 +12,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.DatePicker
-import dev.eastar.calendar.tools.DayDrawerImpl
-import dev.eastar.calendar.tools.MonthDrawerImpl
-import dev.eastar.calendar.tools.WeekDrawerImpl
+import dev.eastar.calendar.tools.CalendarDrawerImpl
 import java.util.*
 
 //pager 달력
 class CalendarPagerFragment : android.support.v4.app.Fragment() {
     companion object {
         const val pagerCount = 12 * 100 //100년
-        var weekDrawer: WeekDrawer? = WeekDrawerImpl()
-        var monthDrawer: MonthDrawer? = MonthDrawerImpl()
-        var dayDrawer: DayDrawer? = DayDrawerImpl()
     }
 
-    public fun setMonthDrawer(monthDrawer: MonthDrawer?) {
-        Companion.monthDrawer = monthDrawer
-    }
-
-    public fun setWeekDrawer(weekDrawer: WeekDrawer?) {
-        Companion.weekDrawer = weekDrawer
-    }
-
-    public fun setDayDrawer(dayDrawer: DayDrawer?) {
-        Companion.dayDrawer = dayDrawer
+    private var calendarDrawer: CalendarDrawer = CalendarDrawerImpl()
+    public fun setCalendarDrawer(calendarDrawer: CalendarDrawer) {
+        this.calendarDrawer = calendarDrawer
     }
 
     private var onChangeMonth: ((Long) -> Unit)? = null
@@ -105,7 +92,9 @@ class CalendarPagerFragment : android.support.v4.app.Fragment() {
     //-----------------------------------------------------------------------------------------
     private inner class DAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
         override fun getItem(position: Int): Fragment {
-            return CalendarFragment.newInstance(toDisplayMonth(position))
+            return CalendarFragment.newInstance(toDisplayMonth(position)).apply {
+                this.setCalendarDrawer(calendarDrawer)
+            }
         }
 
         override fun getCount() = pagerCount
@@ -160,7 +149,7 @@ class CalendarPagerFragment : android.support.v4.app.Fragment() {
         dpd.show()
     }
 
-    fun distance(milliseconds_first: Long, milliseconds_end: Long, field: Int): Int {
+    private fun distance(milliseconds_first: Long, milliseconds_end: Long, field: Int): Int {
         val sd = CalendarUtil.stripTime(milliseconds_first)
         val ed = CalendarUtil.stripTime(milliseconds_end)
 

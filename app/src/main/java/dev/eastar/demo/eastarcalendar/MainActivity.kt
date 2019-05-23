@@ -1,7 +1,8 @@
 package dev.eastar.demo.eastarcalendar
 
 import android.content.Context
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Rect
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
@@ -12,9 +13,7 @@ import android.widget.Toast
 import dev.eastar.calendar.CalendarPagerFragment
 import dev.eastar.calendar.day
 import dev.eastar.calendar.month
-import dev.eastar.calendar.tools.DayDrawerImpl
-import dev.eastar.calendar.tools.MonthDrawerImpl
-import dev.eastar.calendar.tools.WeekDrawerImpl
+import dev.eastar.calendar.tools.CalendarDrawerImpl
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import java.util.*
@@ -39,28 +38,39 @@ class MainActivity : AppCompatActivity() {
         calendarPager.setOnWeekClickListener {
             toast(Calendar.getInstance().apply { set(Calendar.DAY_OF_WEEK, it) }.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault()))
         }
-        calendarPager.setDayDrawer(object : DayDrawerImpl() {
-            override fun draw(canvas: Canvas, rc: Rect, day: Long, displayMonth: Long, selectedDay: Long, pressedDay: Long) {
-                super.draw(canvas, rc, day, displayMonth, selectedDay, pressedDay)
+        calendarPager.setCalendarDrawer(object : CalendarDrawerImpl() {
+            //month bg
+            override fun drawMonthBg(canvas: Canvas, rect: Rect, firstDay: Long, col: Int, row: Int) {
+                super.drawMonthBg(canvas, rect, firstDay, col, row)
+            }
+            //week
+            override fun drawWeekBG(canvas: Canvas, rect: Rect) {
+                super.drawWeekBG(canvas, rect)
             }
 
-            override fun drawDay(canvas: Canvas, rc: Rect, day: Long, displayMonth: Long, selectedDay: Long) {
-                super.drawDay(canvas, rc, day, displayMonth, selectedDay)
-                canvas.drawRoundRect(RectF(rc).apply { inset(10F, 10F) }, 3F, 3F, Paint().apply { color = Color.parseColor("#550000ff") })
+            override fun drawWeekItem(canvas: Canvas, rect: Rect, dayOfWeek: Int) {
+                super.drawWeekItem(canvas, rect, dayOfWeek)
             }
 
-            override fun drawState(canvas: Canvas, rc: Rect, day: Long, displayMonth: Long, selectedDay: Long) {
-                super.drawState(canvas, rc, day, displayMonth, selectedDay)
+            override fun drawDay(canvas: Canvas, rc: Rect, day: Long, displayMonth: Long, selectedDay: Long, pressedDay: Long) {
+                super.drawDay(canvas, rc, day, displayMonth, selectedDay, pressedDay)
             }
 
-            override fun drawPressed(canvas: Canvas, rc: Rect, day: Long, displayMonth: Long, selectedDay: Long, pressedDay: Long) {
-                canvas.drawRoundRect(RectF(rc).apply { inset(1F, 1F) }, 3F, 3F, Paint().apply { color = Color.parseColor("#55ff0000") })
-                super.drawPressed(canvas, rc, day, displayMonth, selectedDay, pressedDay)
+            override fun drawDayItem(canvas: Canvas, rc: Rect, day: Long, displayMonth: Long, selectedDay: Long) {
+                super.drawDayItem(canvas, rc, day, displayMonth, selectedDay)
             }
-        })
-        calendarPager.setWeekDrawer(object : WeekDrawerImpl() {
-        })
-        calendarPager.setMonthDrawer(object : MonthDrawerImpl() {
+
+            override fun drawDayState(canvas: Canvas, rc: Rect, day: Long, displayMonth: Long, selectedDay: Long) {
+                super.drawDayState(canvas, rc, day, displayMonth, selectedDay)
+            }
+
+            override fun drawDaySelected(canvas: Canvas, rc: Rect, day: Long, displayMonth: Long, selectedDay: Long, pressedDay: Long) {
+                super.drawDaySelected(canvas, rc, day, displayMonth, selectedDay, pressedDay)
+            }
+
+            override fun drawDayPressed(canvas: Canvas, rc: Rect, day: Long, displayMonth: Long, selectedDay: Long, pressedDay: Long) {
+                super.drawDayPressed(canvas, rc, day, displayMonth, selectedDay, pressedDay)
+            }
         })
         supportFragmentManager.beginTransaction().replace(R.id.container, calendarPager).commit()
     }

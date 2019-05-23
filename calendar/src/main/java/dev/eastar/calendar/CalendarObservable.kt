@@ -1,5 +1,5 @@
 import android.log.Log
-import android.os.log
+import dev.eastar.calendar.log
 import java.util.*
 
 object CalendarObservable : Observable() {
