@@ -14,6 +14,19 @@
 * canvas에서 날짜 표시부를 표현 하도록 했기때문에 빠릅니다.
 * 구현부에서 drawer를 재공 받아서 표현 하기때문에 거의 모든 형태의 표현이 가능합니다.
 
+## Screenshot
+
+![Screenshot](https://github.com/djrain/EastarCalendar/blob/art/release/%EC%95%84%EB%9E%8D.png?raw=true)
+![Screenshot](https://github.com/djrain/EastarCalendar/blob/art/release/%EC%9D%BC%EB%B0%98.png?raw=true)
+
+           
+
+sample RESULTDLG
+1. Request permission
+2. Show message dialog for setting when denied permission
+
+
+
 ## What's new?
 
 2019.5
