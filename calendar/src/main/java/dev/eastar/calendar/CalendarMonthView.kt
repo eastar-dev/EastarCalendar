@@ -173,12 +173,7 @@ class CalendarMonthView @JvmOverloads constructor(context: Context, attrs: Attri
         return consume
     }
 
-    private val onGestureListener = OnGestureListenerEx()
-    private val detector = GestureDetector(getContext(), onGestureListener).apply {
-        setIsLongpressEnabled(false)
-    }
-
-    inner class OnGestureListenerEx : GestureDetector.OnGestureListener {
+    private val onGestureListener = object : GestureDetector.OnGestureListener {
         override fun onDown(e: MotionEvent?) = stateChange(e).let { true }
         fun onUp(e: MotionEvent) = stateChange(null)
         override fun onSingleTapUp(e: MotionEvent?) = hitTest(e!!)
@@ -188,4 +183,5 @@ class CalendarMonthView @JvmOverloads constructor(context: Context, attrs: Attri
         override fun onFling(e1: MotionEvent?, e2: MotionEvent?, velocityX: Float, velocityY: Float) = false
         override fun onLongPress(e: MotionEvent?) {}
     }
+    private val detector = GestureDetector(getContext(), onGestureListener).apply { setIsLongpressEnabled(false) }
 }

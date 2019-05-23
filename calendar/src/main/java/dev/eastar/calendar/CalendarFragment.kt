@@ -10,7 +10,6 @@ import android.view.ViewGroup
 class CalendarFragment : android.support.v4.app.Fragment() {
     //표시되는 월의 1일 0시
     private var displayMonth = 0L
-    private val selectedDay = 0L
 
     companion object {
         const val DISPLAY_MONTH = "DISPLAY_MONTH"
