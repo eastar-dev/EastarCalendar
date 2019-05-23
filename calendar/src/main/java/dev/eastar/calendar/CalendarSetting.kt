@@ -2,16 +2,15 @@ package dev.eastar.calendar
 
 import android.graphics.Color
 import java.util.*
-import java.util.Calendar.DAY_OF_WEEK
-import java.util.Calendar.SHORT
-
-const val WEEK_COUNT = 6
-const val DAY1 = 86400000L
 
 val WEEK_HEIGHT: Int = 25.dp
 val TEXT_SIZE = 14.dp
-val firstDayOfWeek = Calendar.getInstance().firstDayOfWeek
 
+const val WEEK_COUNT = 6
+
+const val DAY1 = 86400000L
+
+val firstDayOfWeek = Calendar.getInstance().firstDayOfWeek
 //시작요일은 붉은색, 시작요일에서 일주일에서 하루모자른 날은 파란색
 val dayOfWeekColors by lazy {
     mapOf(Calendar.SUNDAY to Color.DKGRAY
@@ -27,8 +26,8 @@ val dayOfWeekColors by lazy {
 }
 
 fun getDisplayShortName(dayOfWeek: Int) = Calendar.getInstance().run {
-    set(DAY_OF_WEEK, dayOfWeek)
-    getDisplayName(DAY_OF_WEEK, SHORT, Locale.getDefault())
+    set(Calendar.DAY_OF_WEEK, dayOfWeek)
+    getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT, Locale.getDefault())
 }
 
 val dayOfWeekTexts by lazy {
