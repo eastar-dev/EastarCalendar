@@ -1,6 +1,5 @@
 package dev.eastar.calendar
 
-import CalendarObservable
 import android.app.DatePickerDialog
 //import android.log.Log
 import android.os.Bundle
@@ -89,6 +88,7 @@ class CalendarPagerFragment : android.support.v4.app.Fragment() {
         pager.setCurrentItem(toPosition(selectedDay), false)
     }
 
+    //adapter
     //-----------------------------------------------------------------------------------------
     private inner class DAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
         override fun getItem(position: Int): Fragment {
@@ -99,8 +99,8 @@ class CalendarPagerFragment : android.support.v4.app.Fragment() {
 
         override fun getCount() = pagerCount
     }
+    //util
     //-----------------------------------------------------------------------------------------
-
     private fun getStartDay(centerMonth: Long) = Calendar.getInstance().apply {
         timeInMillis = centerMonth
         set(Calendar.DATE, 1)
@@ -125,13 +125,12 @@ class CalendarPagerFragment : android.support.v4.app.Fragment() {
         return distance(startDay, timeInMillis, Calendar.MONTH)
     }
 
-    fun toDisplayMonth(position: Int) = Calendar.getInstance().apply {
+    private fun toDisplayMonth(position: Int) = Calendar.getInstance().apply {
         timeInMillis = startDay
         add(Calendar.MONTH, position)
         set(Calendar.DATE, getActualMinimum(Calendar.DATE))
     }.timeInMillis
 
-    //util
     private fun showDatePickerDialog(current: Long = System.currentTimeMillis(), maximim: Long? = null, minimum: Long? = null, onDateSetListener: (DatePicker, Int, Int, Int) -> Unit) {
         var cur: Long = current
         var min: Long? = minimum
@@ -184,6 +183,7 @@ class CalendarPagerFragment : android.support.v4.app.Fragment() {
     }
 
     //interface
+    //----------------------------------------------------------------------------------------------------------------------------
     @Suppress("unused")
     public fun prev() {
         pager.currentItem = pager.currentItem - 1
